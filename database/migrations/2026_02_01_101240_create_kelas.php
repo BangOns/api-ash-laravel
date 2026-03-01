@@ -14,14 +14,14 @@ return new class extends Migration
         Schema::create('kelas', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('nama_kelas');
-            $table->foreignUuid('jurusan_id')->constrained(
+            $table->foreignUuid('jurusan_id')->nullable()->constrained(
                 table: 'jurusan',
                 indexName: 'kelas_jurusan_id'
-            )->onUpdate('cascade');
-            $table->foreignUuid('wali_kelas_id')->constrained(
+            )->onUpdate('cascade')->nullOnDelete();
+            $table->foreignUuid('wali_kelas_id')->nullable()->constrained(
                 table: 'wali_kelas',
                 indexName: 'kelas_wali_kelas_id'
-            )->onUpdate('cascade');
+            )->onUpdate('cascade')->nullOnDelete();
             $table->timestamps();
         });
     }

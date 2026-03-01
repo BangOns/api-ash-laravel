@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Laravel\Sanctum\Http\Middleware\CheckAbilities;
 use Laravel\Sanctum\Http\Middleware\CheckForAnyAbility;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
@@ -31,9 +32,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 404);
             }
         });
-        $exceptions->render(function (UnauthorizedHttpException $e, Request $request) {
-            dd($e, $request);
-        });
+        // $exceptions->render(function (Throwable $e, Request $request) {
+        //     if ($request->is('api/*')) {
+        //         return response()->json([
+        //             'status' => false,
+        //             'message' => 'Internal Server Error'
+        //         ], 500);
+        //     }
+        // });
 
         $exceptions->render(function (AccessDeniedHttpException $e, Request $request) {
             if ($request->is('api/*')) {
@@ -42,6 +48,15 @@ return Application::configure(basePath: dirname(__DIR__))
                     'code' => 403,
                     'message' => 'Anda tidak memiliki izin.'
                 ], 403);
+            }
+        });
+        $exceptions->render(function (MethodNotAllowedHttpException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'status' => 'error',
+                    'code' => 405,
+                    'message' => 'Method not allowed.'
+                ], 405);
             }
         });
     })->create();

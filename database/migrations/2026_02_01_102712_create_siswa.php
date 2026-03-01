@@ -18,12 +18,12 @@ return new class extends Migration
             $table->foreignUuid('kelas_id')->constrained(
                 table: 'kelas',
                 indexName: 'siswa_kelas_id'
-            )->onUpdate('cascade');
+            )->onUpdate('cascade')->onDelete('cascade');
 
             $table->foreignUuid('jurusan_id')->constrained(
                 table: 'jurusan',
                 indexName: 'siswa_jurusan_id'
-            )->onUpdate('cascade');
+            )->onUpdate('cascade')->onDelete('cascade');
 
             $table->timestamps();
         });

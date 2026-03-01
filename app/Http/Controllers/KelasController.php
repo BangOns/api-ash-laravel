@@ -12,7 +12,7 @@ class KelasController extends Controller
     public function index()
     {
         try {
-            $paginator = Kelas::with('jurusan')->paginate(5);
+            $paginator = Kelas::with('jurusan', 'waliKelas')->paginate(5);
             return response()->json([
                 'status' => true,
                 'message' => 'success',
@@ -34,6 +34,7 @@ class KelasController extends Controller
     public function show(Kelas $kelas)
     {
         try {
+            dd($kelas);
             $data = new KelasResource($kelas);
             return response()->json([
                 'status' => true,

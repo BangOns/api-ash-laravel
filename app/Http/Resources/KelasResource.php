@@ -17,14 +17,14 @@ class KelasResource extends JsonResource
         return [
             'id' => $this->id,
             'nama_kelas' => $this->nama_kelas,
-            'jurusan' => [
+            'jurusan' =>  $this->jurusan ? [
                 'id' => $this->jurusan->id,
                 'nama_jurusan' => $this->jurusan->nama_jurusan
-            ],
-            'wali_kelas' => [
+            ] : null,
+            'wali_kelas' =>  $this->waliKelas ? [
                 'id' => $this->waliKelas->id,
                 'nama_wali_kelas' => $this->waliKelas->nama_wali_kelas
-            ]
+            ] : null
         ];
     }
 }

@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
-class LoginRequest extends FormRequest
+class RegisterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,25 +25,29 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => [
-                'required',
-                'email'
-            ],
-            'password' => ['required']
+            'name' => 'required|min:3',
+            'email' => ['required', 'email',  Rule::unique('users', 'email')],
+            'password' => 'required|min:6',
+            'role' => 'required|in:admin,guru,siswa'
         ];
     }
     public function attributes()
     {
         return [
+            'name' => 'nama',
             'email' => 'email',
-            'password' => 'password'
+            'password' => 'password',
+            'role' => 'role',
         ];
     }
     public function messages()
     {
         return [
             'required' => ':attribute wajib diisi',
-            'email' => ':attribute harus berupa email yang valid'
+            'email' => ':attribute harus berupa email yang valid',
+            'min' => 'tidak boleh kurang dari :min',
+            'in' => 'tidak boleh beda dari admin, guru, siswa',
+            'unique' => 'tidak boleh sama dengan yang sudah ada'
         ];
     }
     protected function failedValidation(Validator $validator)

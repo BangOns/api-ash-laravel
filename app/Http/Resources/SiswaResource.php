@@ -18,14 +18,14 @@ class SiswaResource extends JsonResource
             'id' => $this->id,
             'nama_siswa' => $this->nama_siswa,
             'jkl' => $this->jkl,
-            'kelas' => [
+            'kelas' =>  $this->kelas ? [
                 'id' => $this->kelas->id,
                 'nama_kelas' => $this->kelas->nama_kelas
-            ],
-            'jurusan' => [
+            ] : null,
+            'jurusan' =>  $this->jurusan ? [
                 'id' => $this->jurusan->id,
                 'nama_jurusan' => $this->jurusan->nama_jurusan
-            ]
+            ] : null
         ];
     }
 }
