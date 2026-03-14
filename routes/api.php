@@ -22,9 +22,9 @@ Route::middleware(['auth:sanctum', 'ability:admin,access_api'])->group(function 
     //  jurusan
     Route::apiResource('jurusan', JurusanController::class);
     //wali_kelas
-    Route::apiResource('wali-kelas', WaliKelasController::class);
+    Route::apiResource('wali-kelas', WaliKelasController::class)->parameter('wali-kelas', 'wali_kelas:id');
     // kelas
-    Route::apiResource('kelas', KelasController::class);
+    Route::apiResource('kelas', KelasController::class)->parameter('kelas', 'kelas:id');
     // Pelajaran
     Route::apiResource('pelajaran', PelajaranController::class);
 });

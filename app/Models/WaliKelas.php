@@ -16,16 +16,16 @@ class WaliKelas extends Model
     protected $table = 'wali_kelas';
     protected $keyType = 'string';
     public $incrementing = false;
-    protected static function boot()
-    {
-        parent::boot();
+    // protected static function boot()
+    // {
+    //     parent::boot();
 
-        static::creating(function ($model) {
-            if (!$model->id) {
-                $model->id = Str::uuid();
-            }
-        });
-    }
+    //     static::creating(function ($model) {
+    //         if (!$model->id) {
+    //             $model->id = Str::uuid();
+    //         }
+    //     });
+    // }
     public function kelas(): HasMany
     {
         return $this->hasMany(Kelas::class);

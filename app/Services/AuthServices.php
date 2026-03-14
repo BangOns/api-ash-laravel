@@ -16,7 +16,7 @@ class AuthServices
         if (!$validateData || !Hash::check($password, $validateData->password)) {
             throw new InvalidLoginException();
         }
-        $token = $validateData->createToken('access_token', ["role:{$validateData->role}", 'access_api'], Carbon::now()->addMinutes(10))->plainTextToken;
+        $token = $validateData->createToken('access_token', ["role:{$validateData->role}", 'access_api'], Carbon::now()->addMinutes(60))->plainTextToken;
         $refresh_token = $validateData->createToken('refresh_token', ["role:{$validateData->role}", 'issue_access_api'], Carbon::now()->addDays(1))->plainTextToken;
         return [
             'user' => $validateData,

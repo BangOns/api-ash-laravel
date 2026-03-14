@@ -27,8 +27,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
             if ($request->is('api/*')) {
+
                 return response()->json([
-                    'message' => 'Endpoint not found.'
+                    'message' => $e->getMessage() ?? 'Endpoint not found.'
                 ], 404);
             }
         });

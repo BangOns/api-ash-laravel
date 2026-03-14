@@ -15,15 +15,16 @@ class KelasResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+
             'id' => $this->id,
             'nama_kelas' => $this->nama_kelas,
             'jurusan' =>  $this->jurusan ? [
                 'id' => $this->jurusan->id,
                 'nama_jurusan' => $this->jurusan->nama_jurusan
             ] : null,
-            'wali_kelas' =>  $this->waliKelas ? [
-                'id' => $this->waliKelas->id,
-                'nama_wali_kelas' => $this->waliKelas->nama_wali_kelas
+            'wali_kelas' =>  $this->wali_kelas ? [
+                'id' => $this->wali_kelas->id,
+                'nama_wali_kelas' => $this->wali_kelas->nama_wali_kelas
             ] : null
         ];
     }

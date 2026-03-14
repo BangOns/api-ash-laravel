@@ -12,7 +12,7 @@ class PelajaranController extends Controller
     public function index()
     {
         try {
-            $paginator = Pelajaran::with('kelas')->paginate(5);
+            $paginator = Pelajaran::with('kelas', 'wali_kelas')->paginate(5);
             return response()->json([
                 'status' => true,
                 'data' => PelajaranResource::collection($paginator),
