@@ -3,68 +3,73 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Jurusan\JurusanRequest;
-use App\Http\Resources\JurusanResourse;
+use App\Http\Resources\JurusanResource;
 use App\Models\Jurusan;
-
+use App\Services\JurusanServices;
+use App\Traits\ApiResponse;
 
 class JurusanController extends Controller
 {
+    public function __construct(
+        protected JurusanServices $jurusanServices,
+        protected ApiResponse $apiResponse
+    ) {}
+
     public function index()
     {
-        $paginator = Jurusan::latest()->paginate(5);
-        return response()->json([
-            'status' => true,
-            'data' => JurusanResourse::collection($paginator),
-            'message' => 'success',
-            'pagination' => [
-                'current_page' => $paginator->currentPage(),
-                'last_page' => $paginator->lastPage(),
-                'per_page' => $paginator->perPage(),
-                'total' => $paginator->total(),
-            ],
-        ]);
+        $paginator = $this->jurusanServices->getAllJurusan(5);
+
+        return $this->apiResponse->successResponse(
+            JurusanResource::collection($paginator),
+            'Jurusan retrieved successfully',
+            200,
+            [
+                'pagination' => [
+                    'current_page' => $paginator->currentPage(),
+                    'last_page' => $paginator->lastPage(),
+                    'per_page' => $paginator->perPage(),
+                    'total' => $paginator->total(),
+                ]
+            ]
+        );
     }
+
     public function show(Jurusan $jurusan)
     {
-        $data = new JurusanResourse($jurusan);
-
-        return response()->json([
-            'status' => true,
-            'data' => $data,
-            'message' => 'success'
-        ]);
+        return $this->apiResponse->successResponse(
+            new JurusanResource($jurusan),
+            'Success'
+        );
     }
+
     public function store(JurusanRequest $request)
     {
+        $data = $this->jurusanServices->addJurusan($request->validated());
 
-        $data = Jurusan::create([
-            'nama_jurusan' => $request->nama_jurusan
-        ]);
-        return response()->json([
-            'status' => true,
-            'data' => $data,
-            'message' => 'success'
-        ], 201);
+        return $this->apiResponse->successResponse(
+            new JurusanResource($data),
+            'Jurusan created successfully',
+            201
+        );
     }
 
     public function update(JurusanRequest $request, Jurusan $jurusan)
     {
-        $data = Jurusan::where('id', $jurusan->id)->update([
-            'nama_jurusan' => $request->nama_jurusan
-        ]);
-        return response()->json([
-            'status' => true,
-            'data' => $data,
-            'message' => 'success'
-        ], 201);
+        $data = $this->jurusanServices->updateJurusan($request->validated(), $jurusan);
+
+        return $this->apiResponse->successResponse(
+            new JurusanResource($data),
+            'Jurusan updated successfully'
+        );
     }
+
     public function destroy(Jurusan $jurusan)
     {
-        $data = $jurusan->delete();
-        return response()->json([
-            'status' => true,
-            'data' => $data,
-            'message' => 'success'
-        ], 201);
+        $this->jurusanServices->deleteJurusan($jurusan);
+
+        return $this->apiResponse->successResponse(
+            null,
+            'Jurusan deleted successfully'
+        );
     }
 }

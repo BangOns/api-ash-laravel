@@ -28,7 +28,7 @@ class JurusanRequest extends FormRequest
             'nama_jurusan' => [
                 'required',
                 'min:3',
-                Rule::unique('jurusan', 'nama_jurusan')
+                Rule::unique('jurusan', 'nama_jurusan')->ignore($this->jurusan)
             ]
         ];
     }
