@@ -22,5 +22,38 @@ class JurusanSeeder extends Seeder
         Jurusan::create([
             'nama_jurusan' => 'Sosial dan Politik',
         ]);
+        Jurusan::create([
+            'nama_jurusan' => 'Multimedia',
+        ]);
+        Jurusan::create([
+            'nama_jurusan' => 'Rekayasa Perangkat Lunak',
+        ]);
+        Jurusan::create([
+            'nama_jurusan' => 'Teknik Elektronika Industri',
+        ]);
+        Jurusan::create([
+            'nama_jurusan' => 'Teknik Otomotif',
+        ]);
+        Jurusan::create([
+            'nama_jurusan' => 'Teknik Bisnis Sepeda Motor',
+        ]);
+        Jurusan::create([
+            'nama_jurusan' => 'Teknik Kendaraan Ringan Otomotif',
+        ]);
+        Jurusan::create([
+            'nama_jurusan' => 'Teknik Pemesinan',
+        ]);
+        Jurusan::create([
+            'nama_jurusan' => 'Teknik Pengelasan',
+        ]);
+        Jurusan::create([
+            'nama_jurusan' => 'Teknik Fabrikasi Logam',
+        ]);
+        Jurusan::create([
+            'nama_jurusan' => 'Teknik Komputer dan Jaringan',
+        ]);
+        Jurusan::create([
+            'nama_jurusan' => 'Teknik Komputer dan Jaringan',
+        ]);
     }
 }

@@ -18,7 +18,7 @@ Route::get('/user', function (Request $request) {
 Route::post('/login', [App\Http\Controllers\AuthController::class, 'login'])->name('login');
 Route::post('/register', [App\Http\Controllers\AuthController::class, 'register'])->name('register');
 Route::get('/refresh-token', [App\Http\Controllers\AuthController::class, 'refreshToken'])->name('refresh.token')->middleware(['auth:sanctum', 'ability:issue_access_api']);
-Route::middleware(['auth:sanctum', 'ability:admin,access_api'])->group(function () {
+Route::middleware(['auth:sanctum', 'ability:admin,access_api', 'throttle:60,1'])->group(function () {
     //  jurusan
     Route::apiResource('jurusan', JurusanController::class);
     //wali_kelas
@@ -28,7 +28,7 @@ Route::middleware(['auth:sanctum', 'ability:admin,access_api'])->group(function 
     // Pelajaran
     Route::apiResource('pelajaran', PelajaranController::class);
 });
-Route::middleware(['auth:sanctum', 'ability:guru,admin,access_api'])->group(function () {
+Route::middleware(['auth:sanctum', 'ability:guru,admin,access_api', 'throttle:60,1'])->group(function () {
     // jadwal
     Route::apiResource('jadwal', JadwalController::class);
     // Siswa

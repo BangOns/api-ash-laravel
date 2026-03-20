@@ -2,149 +2,63 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Siswa\SiswaRequest;
 use App\Http\Resources\SiswaResource;
 use App\Models\Siswa;
+use App\Services\SiswaServices;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class SiswaController extends Controller
 {
-    public function index()
+    public function __construct(protected SiswaServices $siswaServices, protected ApiResponse $apiResponse) {}
+    public function index(Request $request)
     {
-        try {
-            $paginator = Siswa::with('kelas', 'jurusan')->paginate(5);
-            return response()->json([
-                'status' => true,
-                'message' => 'success',
-                'data' => SiswaResource::collection($paginator),
+        $paginator = $this->siswaServices->getAllSiswa(5, $request->query('search', ''));
+        return $this->apiResponse->successResponse(
+            SiswaResource::collection($paginator),
+            'Siswa retrieved successfully',
+            200,
+            [
                 'pagination' => [
                     'current_page' => $paginator->currentPage(),
                     'last_page' => $paginator->lastPage(),
                     'per_page' => $paginator->perPage(),
                     'total' => $paginator->total(),
-                ],
-            ]);
-        } catch (\Throwable $th) {
-            return response()->json([
-                'status' => false,
-                'message' => $th->getMessage()
-            ], 500);
-        }
+                ]
+            ]
+        );
     }
     public function show(Siswa $siswa)
     {
-        try {
-            $data = new SiswaResource($siswa);
-            return response()->json([
-                'status' => true,
-                'data' => $data,
-                'message' => 'success'
-            ]);
-        } catch (\Throwable $th) {
-            return response()->json([
-                'status' => false,
-                'message' => $th->getMessage()
-            ], 500);
-        }
+        return $this->apiResponse->successResponse(
+            new SiswaResource($siswa),
+            'Success'
+        );
     }
-    public function store(Request $request)
+    public function store(SiswaRequest $request)
     {
-        try {
-            $validator = Validator::make($request->all(), [
-                'nama_siswa' => 'required|min:3',
-                'jkl' => 'required|in:L,P',
-                'kelas_id' => 'required|exists:kelas,id',
-                'jurusan_id' => 'required|exists:jurusan,id'
-            ], [
-                'required' => ':attribute wajib diisi',
-                'min' => ':attribute minimal 3 karakter',
-                'exists' => ':attribute tidak ditemukan',
-                'in' => ':attribute harus salah satu dari :values'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => $validator->errors()
-                ], 422);
-            };
-
-            $data = Siswa::create(
-                $request->only([
-                    'nama_siswa',
-                    'jkl',
-                    'kelas_id',
-                    'jurusan_id'
-                ])
-            );
-            return response()->json([
-                'status' => true,
-                'data' => new SiswaResource($data),
-                'message' => 'success'
-            ]);
-        } catch (\Throwable $th) {
-            return response()->json([
-                'status' => false,
-                'message' => $th->getMessage()
-            ], 500);
-        }
+        $data = $this->siswaServices->addSiswa($request->validated());
+        return $this->apiResponse->successResponse(
+            new SiswaResource($data),
+            'Siswa created successfully',
+            201
+        );
     }
-    public function update(Request $request, Siswa $siswa)
+    public function update(SiswaRequest $request, Siswa $siswa)
     {
-        try {
-            $validator = Validator::make($request->all(), [
-                'nama_siswa' => 'required|min:3',
-                'jkl' => 'required|in:L,P',
-                'kelas_id' => 'required|exists:kelas,id',
-                'jurusan_id' => 'required|exists:jurusan,id'
-            ], [
-                'required' => ':attribute wajib diisi',
-                'unique' => ':attribute sudah ada',
-                'min' => ':attribute minimal 3 karakter',
-                'exists' => ':attribute tidak ditemukan'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => $validator->errors()
-                ], 422);
-            };
-
-            $data = $siswa::where('id', $siswa->id)->update(
-                $request->only([
-                    'nama_siswa',
-                    'jkl',
-                    'kelas_id',
-                    'jurusan_id'
-                ])
-            );
-            return response()->json([
-                'status' => true,
-                'data' => $data,
-                'message' => 'success'
-            ]);
-        } catch (\Throwable $th) {
-            return response()->json([
-                'status' => false,
-                'message' => $th->getMessage()
-            ], 500);
-        }
+        $data = $this->siswaServices->updateSiswa($request->validated(), $siswa);
+        return $this->apiResponse->successResponse(
+            new SiswaResource($data),
+            'Siswa updated successfully'
+        );
     }
     public function destroy(Siswa $siswa)
     {
-        try {
-            $data = $siswa->delete();
-            return response()->json([
-                'status' => true,
-                'data' => $data,
-                'message' => 'success'
-            ], 201);
-        } catch (\Throwable $th) {
-            return response()->json([
-                'status' => false,
-                'message' => $th->getMessage()
-            ], 500);
-        }
+        $siswa->delete();
+        return $this->apiResponse->successResponse(
+            null,
+            'Siswa deleted successfully'
+        );
     }
 }

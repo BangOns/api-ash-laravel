@@ -33,14 +33,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 404);
             }
         });
-        // $exceptions->render(function (Throwable $e, Request $request) {
-        //     if ($request->is('api/*')) {
-        //         return response()->json([
-        //             'status' => false,
-        //             'message' => 'Internal Server Error'
-        //         ], 500);
-        //     }
-        // });
+        $exceptions->render(function (Throwable $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'status' => false,
+                    'message' => $e->getMessage()
+                ], 500);
+            }
+        });
 
         $exceptions->render(function (AccessDeniedHttpException $e, Request $request) {
             if ($request->is('api/*')) {

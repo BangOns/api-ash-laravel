@@ -5,65 +5,62 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Kelas\KelasRequest;
 use App\Http\Resources\KelasResource;
 use App\Models\Kelas;
+use App\Services\KelasServices;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Validator;
 
 class KelasController extends Controller
 {
-    public function index()
+    public function __construct(protected KelasServices $kelasServices, protected ApiResponse $apiResponse) {}
+
+    public function index(Request $request)
     {
-        $paginator = Cache::remember('kelas.list', 60, function () {
-            return Kelas::with(['jurusan', 'waliKelas'])->paginate(10);
-        });
-        return response()->json([
-            'status' => true,
-            'message' => 'success',
-            'data' => KelasResource::collection($paginator),
-            'pagination' => [
-                'current_page' => $paginator->currentPage(),
-                'last_page' => $paginator->lastPage(),
-                'per_page' => $paginator->perPage(),
-                'total' => $paginator->total(),
-            ],
-        ]);
+
+        $paginator = $this->kelasServices->getAllKelas(5, $request->query('search', ''));
+        return $this->apiResponse->successResponse(
+            KelasResource::collection($paginator),
+            'Kelas retrieved successfully',
+            200,
+            [
+                'pagination' => [
+                    'current_page' => $paginator->currentPage(),
+                    'last_page' => $paginator->lastPage(),
+                    'per_page' => $paginator->perPage(),
+                    'total' => $paginator->total(),
+                ]
+            ]
+        );
     }
     public function show(Kelas $kelas)
     {
-        $data = new KelasResource($kelas);
-        return response()->json([
-            'status' => true,
-            'data' => $data,
-            'message' => 'success'
-        ]);
+        return $this->apiResponse->successResponse(
+            new KelasResource($kelas),
+            'Success'
+        );
     }
     public function store(KelasRequest $request)
     {
-        $data = Kelas::create(
-            $request->validated()
+        $data = $this->kelasServices->addKelas($request->validated());
+        return $this->apiResponse->successResponse(
+            new KelasResource($data),
+            'Kelas created successfully',
+            201
         );
-        return response()->json([
-            'status' => true,
-            'message' => 'success'
-        ], 201);
     }
     public function update(KelasRequest $request, Kelas $kelas)
     {
-        $data = $kelas::where('id', $kelas->id)->update(
-            $request->validated()
+        $data = $this->kelasServices->updateKelas($request->validated(), $kelas);
+        return $this->apiResponse->successResponse(
+            new KelasResource($kelas),
+            'Kelas updated successfully'
         );
-        return response()->json([
-            'status' => true,
-            'data' => $data,
-            'message' => 'success'
-        ], 200);
     }
     public function destroy(Kelas $kelas)
     {
         $kelas->delete();
-        return response()->json([
-            'status' => true,
-            'message' => 'success'
-        ], 200);
+        return $this->apiResponse->successResponse(
+            null,
+            'Kelas deleted successfully'
+        );
     }
 }
